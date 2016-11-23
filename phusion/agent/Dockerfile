@@ -7,9 +7,24 @@ ARG GO_VERSION="16.8.0-3929"
 ARG DOWNLOAD_URL="https://download.go.cd/binaries"
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y -q \
+      build-essential \
+      unzip \
+      openjdk-7-jre-headless \
+      git \
+      mercurial \
+      nodejs \
+      subversion
+
+RUN npm install -g grunt-cli
+
+WORKDIR /tmp
+RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" && \
+  unzip awscli-bundle.zip && \
+  ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 
 RUN mkdir /etc/service/go-agent
 ADD go-agent-start.sh /etc/service/go-agent/run
