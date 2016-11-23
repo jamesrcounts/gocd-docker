@@ -43,6 +43,9 @@ WORKDIR /tmp
 RUN dpkg -i /tmp/go-agent.deb
 RUN sed -i -e 's/DAEMON=Y/DAEMON=N/' /etc/default/go-agent
 
+# Grant access to docker.sock
+RUN usermod -aG staff go
+
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
